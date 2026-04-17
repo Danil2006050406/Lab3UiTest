@@ -1,0 +1,629 @@
+{
+  "info": {
+    "_postman_id": "4e71ff0f-1464-425c-9c87-74bcd514a845",
+    "name": "New Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54034445",
+    "_collection_link": "https://go.postman.co/collection/54034445-4e71ff0f-1464-425c-9c87-74bcd514a845?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Functional tests",
+      "item": [
+        {
+          "name": "schema validation",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Content-Type is JSON\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\"))\r",
+                  "        .to.include(\"application/json\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time < 2000 ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is array\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data).to.be.an(\"array\");\r",
+                  "    pm.expect(data.length).to.be.above(10);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check structure of first object\", function () {\r",
+                  "    let post = pm.response.json()[0];\r",
+                  "\r",
+                  "    pm.expect(post).to.have.property(\"userId\");\r",
+                  "    pm.expect(post).to.have.property(\"id\");\r",
+                  "    pm.expect(post).to.have.property(\"title\");\r",
+                  "    pm.expect(post).to.have.property(\"body\");\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"Status:\", pm.response.code);\r",
+                  "console.log(\"Time:\", pm.response.responseTime);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const schema = {\r",
+                  "    type: \"object\",\r",
+                  "    properties: {\r",
+                  "        userId: { type: \"number\" },\r",
+                  "        id: { type: \"number\" },\r",
+                  "        title: { type: \"string\" },\r",
+                  "        body: { type: \"string\" }\r",
+                  "    },\r",
+                  "    required: [\"userId\", \"id\", \"title\", \"body\"]\r",
+                  "};\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"JSON schema is valid\", function () {\r",
+                  "    pm.response.to.have.jsonSchema(schema);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/1",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "data-driven test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains id\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"ID is number\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.id).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time < 2000 ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"Created ID:\", pm.response.json().id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const testData = [\r",
+                  "    { title: \"Title1\", body: \"Body1\", userId: 1 },\r",
+                  "    { title: \"Title2\", body: \"Body2\", userId: 2 },\r",
+                  "    { title: \"Title3\", body: \"Body3\", userId: 3 }\r",
+                  "];\r",
+                  "\r",
+                  "let index = pm.environment.get(\"dd_index\") || 0;\r",
+                  "index = Number(index);\r",
+                  "\r",
+                  "pm.environment.set(\"current_title\", testData[index].title);\r",
+                  "pm.environment.set(\"current_body\", testData[index].body);\r",
+                  "pm.environment.set(\"current_userId\", testData[index].userId);\r",
+                  "\r",
+                  "pm.environment.set(\"dd_index\", (index + 1) % testData.length);\r",
+                  "\r",
+                  "pm.request.body.update(\r",
+                  "    JSON.stringify({\r",
+                  "        title: testData[index].title,\r",
+                  "        body: testData[index].body,\r",
+                  "        userId: testData[index].userId\r",
+                  "    })\r",
+                  ");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"temp\",\r\n  \"body\": \"temp\",\r\n  \"userId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative tests",
+      "item": [
+        {
+          "name": "non-existing",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/999999",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "invalid data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response code exists\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": 123\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "POST https://jsonplaceholder.typicode.com/posts",
+              "protocol": "POST https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "wrong id",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 999999,\r\n  \"title\": \"wrong\",\r\n  \"body\": \"wrong\",\r\n  \"userId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/999999",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "non-existing",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Delete response valid\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/999999",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Workflow",
+      "item": [
+        {
+          "name": "create post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.environment.set(\"workflow_id\", data.id);\r",
+                  "\r",
+                  "console.log(\"Workflow ID:\", data.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"workflow title\",\r\n  \"body\": \"workflow body\",\r\n  \"userId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "created post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{workflow_id}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{workflow_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": {{workflow_id}},\r\n  \"title\": \"updated workflow title\",\r\n  \"body\": \"updated workflow body\",\r\n  \"userId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{workflow_id}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{workflow_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updated post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{workflow_id}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{workflow_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Delete successful\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{workflow_id}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{workflow_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "after delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 404\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{workflow_id}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{workflow_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
